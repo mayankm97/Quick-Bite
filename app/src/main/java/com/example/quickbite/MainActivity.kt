@@ -8,16 +8,15 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.quickbite.data.FoodApi
+import com.example.quickbite.ui.features.auth.signup.SignUpScreen
 import com.example.quickbite.ui.theme.QuickBiteTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -68,10 +67,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuickBiteTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Box (modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                        SignUpScreen()
+                    }
                 }
             }
         }
@@ -84,21 +82,5 @@ class MainActivity : ComponentActivity() {
             delay(3000)
             showSplashScreen = false
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuickBiteTheme {
-        Greeting("Android")
     }
 }

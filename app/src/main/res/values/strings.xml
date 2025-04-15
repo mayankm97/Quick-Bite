@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">QuickBite</string>
+    <string name="skip">Skip</string>
+    <string name="welcome">Welcome to</string>
+    <string name="food_hub_desc">Your favourite foods delivered fast at your door.</string>
+    <string name="sign_with_email">Sign in with email</string>
+    <string name="sign_in_with">Sign in with</string>
+    <string name="sign_in_title">Sign In</string>
+    <string name="sign_with_facebook">Facebook</string>
+    <string name="sign_with_google">Google</string>
+    <string name="alread_have_account">Already have an account? Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="full_name">Full Name</string>
+
 </resources>
