@@ -1,5 +1,6 @@
 package com.example.quickbite.ui.features.auth.signup
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -21,7 +22,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +49,7 @@ import com.example.quickbite.R
 import com.example.quickbite.ui.GroupSocialButtons
 import com.example.quickbite.ui.QuickBiteTextField
 import com.example.quickbite.ui.theme.Primary
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
@@ -53,28 +58,40 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val password = viewModel.password.collectAsStateWithLifecycle()
     val errorMessage = remember { mutableStateOf<String?>(null) }
     val loading = remember { mutableStateOf(false) }
-
-    val uiState = viewModel.uiState.collectAsState()
-    when (uiState.value) {
-        is SignUpViewModel.SignupEvent.Error -> {
-            // Error
-            loading.value = false
-            errorMessage.value = "Failed"
-        }
-
-        is SignUpViewModel.SignupEvent.Loading -> {
-            // Show loading indicator
-            loading.value = true
-            errorMessage.value = null
-        }
-
-        else -> {
-            // Do nothing
-            loading.value = false
-            errorMessage.value = null
-        }
-    }
     Box(modifier = Modifier.fillMaxSize()) {
+        val uiState = viewModel.uiState.collectAsState()
+        when (uiState.value) {
+            is SignUpViewModel.SignupEvent.Error -> {
+                // Error
+                loading.value = false
+                errorMessage.value = "Failed"
+            }
+
+            is SignUpViewModel.SignupEvent.Loading -> {
+                // Show loading indicator
+                loading.value = true
+                errorMessage.value = null
+            }
+
+            else -> {
+                // Do nothing
+                loading.value = false
+                errorMessage.value = null
+            }
+        }
+        val context = LocalContext.current
+        LaunchedEffect(true) {
+            viewModel.navigationEvent.collectLatest { event ->
+                when (event) {
+                    is SignUpViewModel.SignupNavigationEvent.NavigateToHome -> {
+                        Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        // Handle other events if needed
+                    }
+                }
+            }
+        }
         Image(
             painter = painterResource(id = R.drawable.ic_sign_up),
             contentDescription = null,
@@ -111,8 +128,6 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
                     Text(text = stringResource(id = R.string.email), color = Color.Gray)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation(),
-
                 )
             QuickBiteTextField(
                 value = password.value,
@@ -131,6 +146,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
                 }
             )
             Spacer(modifier = Modifier.size(16.dp))
+            Text(text = errorMessage.value ?: "", color = Color.Red)
             Button(
                 onClick = viewModel::onSignupClick, modifier = Modifier.height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)

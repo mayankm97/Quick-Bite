@@ -115,13 +115,14 @@ fun SocialButton(
     }
 }
 
-@Composable // by passing parameters of original outlined text field, we try to make the
+// by passing parameters of original outlined text field, we try to make the
 // custom textfield as configurable as possible and as close as possible to outlined text field
+@Composable
 fun QuickBiteTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier,
-    enabled: Boolean = false,
+    enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
     label: @Composable (() -> Unit)? = null,

@@ -3,6 +3,7 @@ package com.example.quickbite.ui.features.auth.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickbite.data.FoodApi
+import com.example.quickbite.data.models.SignUpRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,9 +43,22 @@ class SignUpViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
     fun onSignupClick() {
         viewModelScope.launch {
             _uiState.value = SignupEvent.Loading
-            delay(2000)
-            _uiState.value = SignupEvent.Success
-            _navigationEvent.tryEmit(SignupNavigationEvent.NavigateToHome)
+            try {
+                val response = foodApi.signUp(
+                    SignUpRequest(
+                        name = name.value,
+                        email = email.value,
+                        password = password.value
+                    )
+                )
+                if (response.token.isNotEmpty()) {
+                    _uiState.value = SignupEvent.Success
+                    _navigationEvent.emit(SignupNavigationEvent.NavigateToHome)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _uiState.value = SignupEvent.Error
+            }
         }
     }
 
