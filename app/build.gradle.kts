@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    // serialization plugin
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -68,6 +70,11 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation (libs.androidx.hilt.navigation.compose)
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    // navigation dependency
+    implementation ("androidx.navigation:navigation-compose:2.8.4")
+    // serialization depenedeny
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    // Allows you to convert Kotlin data classes to JSON and parse JSON into Kotlin objects easily
 }
 kapt {
     correctErrorTypes = true

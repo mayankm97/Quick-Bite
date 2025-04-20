@@ -1,6 +1,7 @@
 package com.example.quickbite.data
 
 import com.example.quickbite.data.models.AuthResponse
+import com.example.quickbite.data.models.SignInRequest
 import com.example.quickbite.data.models.SignUpRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,4 +14,7 @@ interface FoodApi {
     // we now need request, reponse model and end point
     @POST("/auth/signup")
     suspend fun signUp(@Body request: SignUpRequest): AuthResponse
+
+    @POST("/auth/login")
+    suspend fun signIn(@Body request: SignInRequest): AuthResponse
 }

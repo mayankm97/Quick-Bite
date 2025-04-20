@@ -1,11 +1,11 @@
-package com.example.quickbite.ui.features.auth.signup
+package com.example.quickbite.ui.features.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickbite.data.FoodApi
+import com.example.quickbite.data.models.SignInRequest
 import com.example.quickbite.data.models.SignUpRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -13,13 +13,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
-class SignUpViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
-    private val _uiState = MutableStateFlow<SignupEvent>(SignupEvent.Nothing)
+class SignInViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
+    private val _uiState = MutableStateFlow<SignInEvent>(SignInEvent.Nothing)
     val uiState = _uiState.asStateFlow()
 
     // to navigate to different screens and creating events for each
-    private val _navigationEvent = MutableSharedFlow<SignupNavigationEvent>()
+    private val _navigationEvent = MutableSharedFlow<SignInNavigationEvent>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     private val _email = MutableStateFlow("")
@@ -28,54 +29,47 @@ class SignUpViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
     private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
-    private val _name = MutableStateFlow("")
-    val name = _name.asStateFlow()
-
     fun onEmailChange(email: String) {
         _email.value = email
     }
     fun onPasswordChange(password: String) {
         _password.value = password
     }
-    fun onNameChange(name: String) {
-        _name.value = name
-    }
-    fun onSignupClick() {
+    fun onSignInClick() {
         viewModelScope.launch {
-            _uiState.value = SignupEvent.Loading
+            _uiState.value = SignInEvent.Loading
             try {
-                val response = foodApi.signUp(
-                    SignUpRequest(
-                        name = name.value,
+                val response = foodApi.signIn(
+                    SignInRequest(
                         email = email.value,
                         password = password.value
                     )
                 )
                 if (response.token.isNotEmpty()) {
-                    _uiState.value = SignupEvent.Success
-                    _navigationEvent.emit(SignupNavigationEvent.NavigateToHome)
+                    _uiState.value = SignInEvent.Success
+                    _navigationEvent.emit(SignInNavigationEvent.NavigateToHome)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.value = SignupEvent.Error
+                _uiState.value = SignInEvent.Error
             }
         }
     }
 
-    fun onLoginClicked() {
+    fun onSignUpClicked() {
         viewModelScope.launch {
-            _navigationEvent.emit(SignupNavigationEvent.NavigateToLogin)
+            _navigationEvent.emit(SignInNavigationEvent.NavigateToSignUp)
         }
     }
 
-    sealed class SignupNavigationEvent {
-        object NavigateToLogin : SignupNavigationEvent()
-        object NavigateToHome : SignupNavigationEvent()
+    sealed class SignInNavigationEvent {
+        object NavigateToSignUp : SignInNavigationEvent()
+        object NavigateToHome : SignInNavigationEvent()
     }
-    sealed class SignupEvent {
-        object Nothing : SignupEvent()
-        object Success : SignupEvent()
-        object Error : SignupEvent()
-        object Loading : SignupEvent()
+    sealed class SignInEvent {
+        object Nothing : SignInEvent()
+        object Success : SignInEvent()
+        object Error : SignInEvent()
+        object Loading : SignInEvent()
     }
 }

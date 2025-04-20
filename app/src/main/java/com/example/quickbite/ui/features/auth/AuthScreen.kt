@@ -32,12 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.quickbite.R
 import com.example.quickbite.ui.GroupSocialButtons
+import com.example.quickbite.ui.navigation.AuthScreen
+import com.example.quickbite.ui.navigation.Login
+import com.example.quickbite.ui.navigation.SignUp
 import com.example.quickbite.ui.theme.Primary
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(navController: NavController) {
     val imageSize = remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -120,7 +125,7 @@ fun AuthScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-
+                    navController.navigate(SignUp)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Gray.copy(alpha = 0.2f)),
@@ -131,7 +136,7 @@ fun AuthScreen() {
             }
 
             TextButton(onClick = {
-                // navController.navigate(Login)
+                navController.navigate(Login)
             }) {
                 Text(text = stringResource(id = R.string.alread_have_account), color = Color.White)
             }
@@ -139,8 +144,9 @@ fun AuthScreen() {
     }
 }
 
-@Preview(showSystemUi = true)
+// preivew of auth screen.kt
+@Preview(showBackground = true)
 @Composable
 fun AuthScreenPreview() {
-    AuthScreen()
+    AuthScreen(rememberNavController())
 }

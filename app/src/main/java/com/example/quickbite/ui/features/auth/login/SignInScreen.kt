@@ -1,4 +1,4 @@
-package com.example.quickbite.ui.features.auth.signup
+package com.example.quickbite.ui.features.auth.login
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
@@ -46,18 +46,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.quickbite.R
 import com.example.quickbite.ui.GroupSocialButtons
 import com.example.quickbite.ui.QuickBiteTextField
 import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
+import com.example.quickbite.ui.navigation.SignUp
 import com.example.quickbite.ui.theme.Primary
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
-    val name = viewModel.name.collectAsStateWithLifecycle()
+fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
     val email = viewModel.email.collectAsStateWithLifecycle()
     val password = viewModel.password.collectAsStateWithLifecycle()
     val errorMessage = remember { mutableStateOf<String?>(null) }
@@ -65,13 +66,13 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
     Box(modifier = Modifier.fillMaxSize()) {
         val uiState = viewModel.uiState.collectAsState()
         when (uiState.value) {
-            is SignUpViewModel.SignupEvent.Error -> {
+            is SignInViewModel.SignInEvent.Error -> {
                 // Error
                 loading.value = false
                 errorMessage.value = "Failed"
             }
 
-            is SignUpViewModel.SignupEvent.Loading -> {
+            is SignInViewModel.SignInEvent.Loading -> {
                 // Show loading indicator
                 loading.value = true
                 errorMessage.value = null
@@ -87,15 +88,15 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
         LaunchedEffect(true) {
             viewModel.navigationEvent.collectLatest { event ->
                 when (event) {
-                    is SignUpViewModel.SignupNavigationEvent.NavigateToHome -> {
+                    is SignInViewModel.SignInNavigationEvent.NavigateToHome -> {
                         navController.navigate(Home) {
                             popUpTo(AuthScreen) {
                                 inclusive = true
                             }
                         }
                     }
-                    is SignUpViewModel.SignupNavigationEvent.NavigateToLogin -> {
-                        navController.navigate(Login)
+                    is SignInViewModel.SignInNavigationEvent.NavigateToSignUp -> {
+                        navController.navigate(SignUp)
                     }
                 }
             }
@@ -116,19 +117,13 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
             // of the UI lower on the screen.
             Box(modifier = Modifier.weight(1f))
             Text(
-                text = stringResource(id = R.string.sign_up),
+                text = stringResource(id = R.string.sign_in),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.size(20.dp))
-            QuickBiteTextField(
-                value = name.value, onValueChange = { viewModel.onNameChange(it) },
-                label = {
-                    Text(text = stringResource(id = R.string.full_name), color = Color.Gray)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+
             QuickBiteTextField(
                 value = email.value,
                 onValueChange = { viewModel.onEmailChange(it) },
@@ -156,7 +151,7 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
             Spacer(modifier = Modifier.size(16.dp))
             Text(text = errorMessage.value ?: "", color = Color.Red)
             Button(
-                onClick = viewModel::onSignupClick, modifier = Modifier.height(48.dp),
+                onClick = viewModel::onSignInClick, modifier = Modifier.height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Primary)
             ) {
                 Box {
@@ -176,7 +171,7 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
                             )
                         } else {
                             Text(
-                                text = stringResource(id = R.string.sign_up),
+                                text = stringResource(id = R.string.sign_in),
                                 color = Color.White,
                                 modifier = Modifier.padding(horizontal = 32.dp)
                             )
@@ -186,11 +181,11 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
             }
             Spacer(modifier = Modifier.size(16.dp))
             Text(
-                text = stringResource(id = R.string.alread_have_account),
+                text = stringResource(id = R.string.dont_have_account),
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        viewModel.onLoginClicked()
+                        viewModel.onSignUpClicked()
                     }
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -199,4 +194,10 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
             //  Box(modifier = Modifier.weight(.8f))
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignInScreenPreview() {
+    SignInScreen(rememberNavController())
 }
