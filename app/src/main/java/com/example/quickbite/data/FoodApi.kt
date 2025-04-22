@@ -1,6 +1,7 @@
 package com.example.quickbite.data
 
 import com.example.quickbite.data.models.AuthResponse
+import com.example.quickbite.data.models.OAuthRequest
 import com.example.quickbite.data.models.SignInRequest
 import com.example.quickbite.data.models.SignUpRequest
 import retrofit2.http.Body
@@ -17,4 +18,7 @@ interface FoodApi {
 
     @POST("/auth/login")
     suspend fun signIn(@Body request: SignInRequest): AuthResponse
+
+    @POST("/auth/oauth")
+    suspend fun oAuth(@Body request: OAuthRequest): AuthResponse
 }
