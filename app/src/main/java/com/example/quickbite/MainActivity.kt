@@ -26,9 +26,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quickbite.data.FoodApi
+import com.example.quickbite.data.FoodHubSession
 import com.example.quickbite.ui.features.auth.AuthScreen
 import com.example.quickbite.ui.features.auth.login.SignInScreen
 import com.example.quickbite.ui.features.auth.signup.SignUpScreen
+import com.example.quickbite.ui.features.home.HomeScreen
 import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
@@ -46,6 +48,8 @@ class MainActivity : ComponentActivity() {
     var showSplashScreen = true
     @Inject
     lateinit var foodApi: FoodApi
+    @Inject
+    lateinit var session: FoodHubSession
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -87,7 +91,7 @@ class MainActivity : ComponentActivity() {
                     // since we want the animation to be global, we define it
                     // under NavHost and not inside individual composable
                     NavHost(navController = navController,
-                        AuthScreen,
+                        if (session.getToken() != null) Home else AuthScreen,
                         modifier = Modifier.padding(innerPadding),
                         enterTransition = {
                             slideIntoContainer(
@@ -124,9 +128,7 @@ class MainActivity : ComponentActivity() {
                             SignInScreen(navController)
                         }
                         composable<Home> {
-                            Box(modifier = Modifier.fillMaxSize().background(Color.Green)) {
-
-                            }
+                            HomeScreen(navController)
                         }
                     }
                 }

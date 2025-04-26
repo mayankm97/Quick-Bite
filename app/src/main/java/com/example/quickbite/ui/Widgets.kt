@@ -1,5 +1,9 @@
 package com.example.quickbite.ui
 
+import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,13 +23,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -33,13 +40,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.quickbite.R
+import com.example.quickbite.ui.features.auth.BaseAuthViewModel
 import com.example.quickbite.ui.theme.Primary
 
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun GroupSocialButtons(
     color: Color = Color.White,
-    onFacebookClick: () -> Unit, onGoogleClick: () -> Unit
+    viewModel: BaseAuthViewModel
 ) {
 
     Column {
@@ -68,6 +77,7 @@ fun GroupSocialButtons(
                 color = color
             )
         }
+        val context = LocalContext.current as ComponentActivity
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -75,15 +85,51 @@ fun GroupSocialButtons(
             SocialButton(
                 icon = R.drawable.fb_icon,
                 title = R.string.sign_with_facebook,
-                onFacebookClick
+                onClick = { viewModel.onGoogleClicked(context) }
             )
             SocialButton(
                 icon = R.drawable.google_icon,
                 title = R.string.sign_with_google,
-                onGoogleClick
+                onClick = { viewModel.onGoogleClicked(context) }
             )
         }
 
+    }
+}
+
+
+@Composable
+fun BasicDialog(title: String, description: String, onClick: () -> Unit) {
+    Surface {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = description,
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Button(
+                onClick = onClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                shape = RoundedCornerShape(16.dp),
+
+                ) {
+                Text(
+                    text = stringResource(id = R.string.ok),
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
+            }
+        }
     }
 }
 
