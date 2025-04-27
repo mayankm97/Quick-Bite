@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.models.Category
+import com.example.quickbite.data.models.Restaurant
 import com.example.quickbite.data.remote.ApiResponse
 import com.example.quickbite.data.remote.safeApiCall
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,29 +27,57 @@ class HomeViewModel @Inject constructor(private val foodApi: FoodApi) : ViewMode
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     var categories = emptyList<Category>()
+    var restaurants = emptyList<Restaurant>()
     init {
-        getCategories()
-        getPopularRestaurants()
-    }
-    fun getCategories() {
         viewModelScope.launch {
-            val response = safeApiCall { foodApi.getCategories() }
-            when (response) {
-                is ApiResponse.Success -> {
-                    categories = response.data.data
-                    _uiState.value = HomeScreenState.Success
-                }
-                is ApiResponse.Error -> {
-                    _uiState.value = HomeScreenState.Empty
-                }
-                else -> {
-                    _uiState.value = HomeScreenState.Empty
-                }
+            categories = getCategories()
+            restaurants = getPopularRestaurants()
+
+            if (categories.isNotEmpty() && restaurants.isNotEmpty()) {
+                _uiState.value = HomeScreenState.Success
+            } else {
+                _uiState.value = HomeScreenState.Empty
             }
         }
     }
-    fun getPopularRestaurants() {
 
+    private suspend fun getCategories() : List<Category> {
+        var list = emptyList<Category>()
+        val response = safeApiCall { foodApi.getCategories() }
+        when (response) {
+            is ApiResponse.Success -> {
+                list = response.data.data
+            }
+            else -> {
+            }
+        }
+        return list
+    }
+
+    private suspend fun getPopularRestaurants() : List<Restaurant> {
+        var list = emptyList<Restaurant>()
+        val response = safeApiCall { foodApi.getRestaurants(40.7128, -74.0060) }
+        when (response) {
+            is ApiResponse.Success -> {
+                list = response.data.data
+                _uiState.value = HomeScreenState.Success
+            }
+            else -> {
+            }
+        }
+        return list
+    }
+
+    fun onRestaurantSelected(it: Restaurant) {
+        viewModelScope.launch {
+            _navigationEvent.emit(
+                HomeScreenNavigationEvents.NavigateToDetail(
+                    it.name,
+                    it.imageUrl,
+                    it.id
+                )
+            )
+        }
     }
 
     sealed class HomeScreenState {
@@ -57,6 +86,6 @@ class HomeViewModel @Inject constructor(private val foodApi: FoodApi) : ViewMode
         object Success : HomeScreenState()
     }
     sealed class HomeScreenNavigationEvents {
-        object NavigateToDetail : HomeScreenNavigationEvents()
+        data class NavigateToDetail(val name: String, val imageUrl: String, val id: String) : HomeScreenNavigationEvents()
     }
 }

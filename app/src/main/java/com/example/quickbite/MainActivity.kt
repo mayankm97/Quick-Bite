@@ -10,6 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,15 +27,18 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.FoodHubSession
 import com.example.quickbite.ui.features.auth.AuthScreen
 import com.example.quickbite.ui.features.auth.login.SignInScreen
 import com.example.quickbite.ui.features.auth.signup.SignUpScreen
 import com.example.quickbite.ui.features.home.HomeScreen
+import com.example.quickbite.ui.features.restaurant_details.RestaurantDetailsScreen
 import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
+import com.example.quickbite.ui.navigation.RestaurantDetails
 import com.example.quickbite.ui.navigation.SignUp
 import com.example.quickbite.ui.theme.QuickBiteTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +55,7 @@ class MainActivity : ComponentActivity() {
     lateinit var foodApi: FoodApi
     @Inject
     lateinit var session: FoodHubSession
+    @OptIn(ExperimentalSharedTransitionApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -90,45 +96,58 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     // since we want the animation to be global, we define it
                     // under NavHost and not inside individual composable
-                    NavHost(navController = navController,
-                        if (session.getToken() != null) Home else AuthScreen,
-                        modifier = Modifier.padding(innerPadding),
-                        enterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                                animationSpec = tween(300)
-                            ) + fadeIn(animationSpec = tween(300))
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                animationSpec = tween(300)
-                            ) + fadeOut(animationSpec = tween(300))
-                        },
-                        popEnterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                animationSpec = tween(300)
-                            ) + fadeIn(animationSpec = tween(300))
-                        },
-                        popExitTransition = {
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                animationSpec = tween(300)
-                            ) + fadeOut(animationSpec = tween(300))
-                        }
-                    ) {
-                        composable<SignUp> {
-                            SignUpScreen(navController)
-                        }
-                        composable<AuthScreen> {
-                            AuthScreen(navController)
-                        }
-                        composable<Login> {
-                            SignInScreen(navController)
-                        }
-                        composable<Home> {
-                            HomeScreen(navController)
+                    SharedTransitionLayout {
+                        NavHost(
+                            navController = navController,
+                            if (session.getToken() != null) Home else AuthScreen,
+                            modifier = Modifier.padding(innerPadding),
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    animationSpec = tween(300)
+                                ) + fadeIn(animationSpec = tween(300))
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = tween(300)
+                                ) + fadeOut(animationSpec = tween(300))
+                            },
+                            popEnterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = tween(300)
+                                ) + fadeIn(animationSpec = tween(300))
+                            },
+                            popExitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = tween(300)
+                                ) + fadeOut(animationSpec = tween(300))
+                            }
+                        ) {
+                            composable<SignUp> {
+                                SignUpScreen(navController)
+                            }
+                            composable<AuthScreen> {
+                                AuthScreen(navController)
+                            }
+                            composable<Login> {
+                                SignInScreen(navController)
+                            }
+                            composable<Home> {
+                                HomeScreen(navController, this)
+                            }
+                            composable<RestaurantDetails> {
+                                val route = it.toRoute<RestaurantDetails>()
+                                RestaurantDetailsScreen(
+                                    navController,
+                                    route.restaurantName,
+                                    route.restaurantImageUrl,
+                                    route.restaurantId,
+                                    this
+                                )
+                            }
                         }
                     }
                 }
