@@ -6,3 +6,4 @@
 5. Here the things were simple, just setup navigations across screens and implemented the signin feature via backend. Next we will change the fade in fade out animation while navigating to another screen from one.
 6. Here, the signin is successfully tested, the google signin implementation is successful too as well as the fade animation is changed to left to right or similar transition, good thing is fade animation is changed easily. 
 7. I fixed authentication edge cases like what happens on user doesn't behave as intended, sheet will appear popping signin failed msg. Setup token based sessions, Started homescreen implementation.
+8. Implemented restaurant list their menu and shared animations.
