@@ -8,3 +8,4 @@
 7. I fixed authentication edge cases like what happens on user doesn't behave as intended, sheet will appear popping signin failed msg. Setup token based sessions, Started homescreen implementation.
 8. Implemented restaurant list their menu and shared animations.
 9. Here I implemented cart fully functional, along with bottom navbar as well as food details screen. Setup the address to implement Google Maps onto it. Next to be done is Maps implementation and Payment integration.
+10. Started with map integration, to be done.
