@@ -53,6 +53,7 @@ import androidx.navigation.toRoute
 import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.FoodHubSession
 import com.example.quickbite.data.models.FoodItem
+import com.example.quickbite.ui.features.add_address.AddAddressScreen
 import com.example.quickbite.ui.features.address_list.AddressListScreen
 import com.example.quickbite.ui.features.auth.AuthScreen
 import com.example.quickbite.ui.features.auth.login.SignInScreen
@@ -62,6 +63,7 @@ import com.example.quickbite.ui.features.cart.CartViewModel
 import com.example.quickbite.ui.features.food_item_details.FoodDetailsScreen
 import com.example.quickbite.ui.features.home.HomeScreen
 import com.example.quickbite.ui.features.restaurant_details.RestaurantDetailsScreen
+import com.example.quickbite.ui.navigation.AddAddress
 import com.example.quickbite.ui.navigation.AddressList
 import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Cart
@@ -279,6 +281,10 @@ class MainActivity : ComponentActivity() {
                             composable<AddressList> {
                                 shouldShowBottomNav.value = false
                                 AddressListScreen(navController)
+                            }
+                            composable<AddAddress> {
+                                shouldShowBottomNav.value = false
+                                AddAddressScreen(navController)
                             }
                         }
                     }
