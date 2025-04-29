@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.quickbite.R
 import com.example.quickbite.ui.features.cart.AddressCard
+import com.example.quickbite.ui.navigation.AddAddress
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -48,7 +49,7 @@ fun AddressListScreen(
                 }
 
                 is AddressListViewModel.AddressEvent.NavigateToAddAddress -> {
-                    //navController.navigate(AddAddress)
+                    navController.navigate(AddAddress)
                 }
 
                 is AddressListViewModel.AddressEvent.NavigateBack -> {
