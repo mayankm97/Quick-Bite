@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +11,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("kotlin-parcelize")
 }
+
+// Read MAPS_API_KEY from local.properties
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        FileInputStream(file).use { load(it) }
+    }
+}
+val MAPS_API_KEY: String = localProperties.getProperty("MAPS_API_KEY")
+    ?: error("MAPS_API_KEY not found in local.properties")
 
 android {
     namespace = "com.example.quickbite"
@@ -21,6 +34,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resValue("string", "google_maps_key", MAPS_API_KEY)
+
     }
 
     buildTypes {
