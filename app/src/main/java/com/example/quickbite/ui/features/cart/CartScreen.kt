@@ -48,7 +48,12 @@ import com.example.quickbite.data.models.CheckoutDetails
 import com.example.quickbite.ui.BasicDialog
 import com.example.quickbite.ui.features.food_item_details.FoodItemCounter
 import com.example.quickbite.ui.navigation.AddressList
+import com.example.quickbite.ui.navigation.OrderSuccess
 import com.example.quickbite.utils.StringUtils
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.rememberPaymentSheet
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,13 +78,13 @@ fun CartScreen(navController: NavController, viewModel: CartViewModel) {
         }
     }
 
-//    val paymentSheet = rememberPaymentSheet(paymentResultCallback = {
-//        if (it is PaymentSheetResult.Completed) {
-//            viewModel.onPaymentSuccess()
-//        } else {
-//            viewModel.onPaymentFailed()
-//        }
-//    })
+    val paymentSheet = rememberPaymentSheet(paymentResultCallback = {
+        if (it is PaymentSheetResult.Completed) {
+            viewModel.onPaymentSuccess()
+        } else {
+            viewModel.onPaymentFailed()
+        }
+    })
     LaunchedEffect(key1 = true) {
         viewModel.event.collectLatest {
             when (it) {
@@ -91,6 +96,28 @@ fun CartScreen(navController: NavController, viewModel: CartViewModel) {
 
                 is CartViewModel.CartEvent.onAddressClicked -> {
                     navController.navigate(AddressList)
+                }
+                is CartViewModel.CartEvent.OrderSuccess -> {
+                    navController.navigate(OrderSuccess(it.orderId!!))
+                }
+                is CartViewModel.CartEvent.onInitiatePayment -> {
+                    PaymentConfiguration.init(navController.context, it.data.publishableKey)
+                    val customer = PaymentSheet.CustomerConfiguration(
+                        it.data.customerId,
+                        it.data.ephemeralKeySecret
+                    )
+                    val paymentSheetConfig = PaymentSheet.Configuration(
+                        merchantDisplayName = "FoodHub",
+                        customer = customer,
+                        allowsDelayedPaymentMethods = false,
+                    )
+
+                    // Initiate payment
+
+                    paymentSheet.presentWithPaymentIntent(
+                        it.data.paymentIntentClientSecret,
+                        paymentSheetConfig
+                    )
                 }
                 else -> {
 

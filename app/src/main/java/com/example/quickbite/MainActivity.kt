@@ -16,6 +16,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -62,6 +63,7 @@ import com.example.quickbite.ui.features.cart.CartScreen
 import com.example.quickbite.ui.features.cart.CartViewModel
 import com.example.quickbite.ui.features.food_item_details.FoodDetailsScreen
 import com.example.quickbite.ui.features.home.HomeScreen
+import com.example.quickbite.ui.features.order_success.OrderSuccess
 import com.example.quickbite.ui.features.restaurant_details.RestaurantDetailsScreen
 import com.example.quickbite.ui.navigation.AddAddress
 import com.example.quickbite.ui.navigation.AddressList
@@ -71,6 +73,8 @@ import com.example.quickbite.ui.navigation.FoodDetails
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
 import com.example.quickbite.ui.navigation.Notification
+import com.example.quickbite.ui.navigation.NotificationScreen
+import com.example.quickbite.ui.navigation.OrderSuccess
 import com.example.quickbite.ui.navigation.RestaurantDetails
 import com.example.quickbite.ui.navigation.SignUp
 import com.example.quickbite.ui.navigation.foodItemNavType
@@ -274,9 +278,7 @@ class MainActivity : ComponentActivity() {
                             }
                             composable<Notification> {
                                 shouldShowBottomNav.value = true
-                                Box {
-
-                                }
+                                NotificationScreen()
                             }
                             composable<AddressList> {
                                 shouldShowBottomNav.value = false
@@ -285,6 +287,11 @@ class MainActivity : ComponentActivity() {
                             composable<AddAddress> {
                                 shouldShowBottomNav.value = false
                                 AddAddressScreen(navController)
+                            }
+                            composable<OrderSuccess> {
+                                shouldShowBottomNav.value = false
+                                val orderID = it.toRoute<OrderSuccess>().orderID
+                                OrderSuccess(orderID, navController)
                             }
                         }
                     }

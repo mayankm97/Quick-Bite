@@ -6,6 +6,9 @@ import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.models.Address
 import com.example.quickbite.data.models.CartItem
 import com.example.quickbite.data.models.CartResponse
+import com.example.quickbite.data.models.ConfirmPaymentRequest
+import com.example.quickbite.data.models.PaymentIntentRequest
+import com.example.quickbite.data.models.PaymentIntentResponse
 import com.example.quickbite.data.models.UpdateCartItemRequest
 import com.example.quickbite.data.remote.ApiResponse
 import com.example.quickbite.data.remote.safeApiCall
@@ -29,7 +32,7 @@ class CartViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
     private var cartResponse: CartResponse? = null
     private val _cartItemCount = MutableStateFlow(0)
     val cartItemCount = _cartItemCount.asStateFlow()
-    //private var paymentIntent: PaymentIntentResponse? = null
+    private var paymentIntent: PaymentIntentResponse? = null
 
     private val address = MutableStateFlow<Address?>(null)
     val selectedAddress = address.asStateFlow()
@@ -119,7 +122,33 @@ class CartViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
         }
     }
 
+    // we will make a webcall to server, we need an id to use with stripe
+    // server assigns us a payment intent id, that payment id is linked with
+    // the order id and we pass payment id to stripe, user process payment
+    // stripe gives a payment method id . payment method is passed back to server and
+    // server will verify with stripe and if payment is done, order will be placed and
+    // order id will be returned to us
     fun checkout() {
+        viewModelScope.launch {
+            _uiState.value = CartUiState.Loading
+            val paymentDetails =
+                safeApiCall { foodApi.getPaymentIntent(PaymentIntentRequest(address.value!!.id!!)) }
+
+            when (paymentDetails) {
+                is ApiResponse.Success -> {
+                    paymentIntent = paymentDetails.data
+                    _event.emit(CartEvent.onInitiatePayment(paymentDetails.data))
+                    _uiState.value = CartUiState.Success(cartResponse!!)
+                }
+
+                else -> {
+                    errorTitle = "Cannot Checkout"
+                    errorMessage = "An error occurred while checking out"
+                    _event.emit(CartEvent.showErrorDialog)
+                    _uiState.value = CartUiState.Success(cartResponse!!)
+                }
+            }
+        }
     }
 
     fun onAddressClicked() {
@@ -140,6 +169,35 @@ class CartViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
         }
     }
 
+    fun onPaymentSuccess() {
+        viewModelScope.launch {
+            _uiState.value = CartUiState.Loading
+            val response =
+                safeApiCall {
+                    foodApi.verifyPurchase(
+                        ConfirmPaymentRequest(
+                            paymentIntent!!.paymentIntentId,
+                            address.value!!.id!!
+                        ), paymentIntent!!.paymentIntentId
+                    )
+                }
+            when (response) {
+                is ApiResponse.Success -> {
+                    _event.emit(CartEvent.OrderSuccess(response.data.orderId))
+                    _uiState.value = CartUiState.Success(cartResponse!!)
+                    getCart()
+                }
+
+                else -> {
+                    errorTitle = "Payment Failed"
+                    errorMessage = "An error occurred while processing your payment"
+                    _event.emit(CartEvent.showErrorDialog)
+                    _uiState.value = CartUiState.Success(cartResponse!!)
+                }
+            }
+        }
+    }
+
     sealed class CartUiState {
         object Nothing : CartUiState()
         object Loading : CartUiState()
@@ -150,6 +208,7 @@ class CartViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
     sealed class CartEvent {
         object showErrorDialog : CartEvent()
         data class OrderSuccess(val orderId: String?) : CartEvent()
+        data class onInitiatePayment(val data: PaymentIntentResponse) : CartEvent()
         object onQuantityUpdateError : CartEvent()
         object onItemRemoveError : CartEvent()
         object onAddressClicked : CartEvent()

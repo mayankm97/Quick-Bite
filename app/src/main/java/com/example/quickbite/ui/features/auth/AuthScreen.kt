@@ -166,7 +166,7 @@ fun AuthScreen(navController: NavController, viewModel: AuthScreenViewModel = hi
                 shape = RoundedCornerShape(32.dp),
                 border = BorderStroke(1.dp, Color.White)
             ) {
-                Text(text = stringResource(id = R.string.sign_with_email), color = Color.White)
+                Text(text = stringResource(id = R.string.alread_have_accoun), color = Color.White)
             }
 
             TextButton(onClick = {

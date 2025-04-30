@@ -7,9 +7,13 @@ import com.example.quickbite.data.models.AddressListResponse
 import com.example.quickbite.data.models.AuthResponse
 import com.example.quickbite.data.models.CartResponse
 import com.example.quickbite.data.models.CategoriesResponse
+import com.example.quickbite.data.models.ConfirmPaymentRequest
+import com.example.quickbite.data.models.ConfirmPaymentResponse
 import com.example.quickbite.data.models.FoodItemResponse
 import com.example.quickbite.data.models.GenericMsgResponse
 import com.example.quickbite.data.models.OAuthRequest
+import com.example.quickbite.data.models.PaymentIntentRequest
+import com.example.quickbite.data.models.PaymentIntentResponse
 import com.example.quickbite.data.models.RestaurantsResponse
 import com.example.quickbite.data.models.ReverseGeoCodeRequest
 import com.example.quickbite.data.models.SignInRequest
@@ -64,5 +68,13 @@ interface FoodApi {
 
     @POST("/addresses")
     suspend fun storeAddress(@Body address: Address): Response<GenericMsgResponse>
+
+    @POST("/payments/create-intent")
+    suspend fun getPaymentIntent(@Body request: PaymentIntentRequest): Response<PaymentIntentResponse>
+
+    @POST("/payments/confirm/{paymentIntentId}")
+    suspend fun verifyPurchase(
+        @Body request: ConfirmPaymentRequest, @Path("paymentIntentId") paymentIntentId: String
+    ): Response<ConfirmPaymentResponse>
 
 }
