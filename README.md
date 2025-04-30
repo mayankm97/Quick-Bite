@@ -9,3 +9,4 @@
 8. Implemented restaurant list their menu and shared animations.
 9. Here I implemented cart fully functional, along with bottom navbar as well as food details screen. Setup the address to implement Google Maps onto it. Next to be done is Maps implementation and Payment integration.
 10. Started with map integration, to be done.
+11. Started with payment integration, to be done
