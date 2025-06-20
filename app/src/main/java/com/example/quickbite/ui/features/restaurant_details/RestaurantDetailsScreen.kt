@@ -284,18 +284,19 @@ fun SharedTransitionScope.FoodItemView(foodItem: FoodItem, animatedVisibilitySco
             Row(modifier = Modifier.align(Alignment.BottomStart)
                 .clip(RoundedCornerShape(16.dp)).padding(horizontal = 8.dp).background(Color.White),
                 verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Filled.Star, contentDescription = null,
+                    modifier = Modifier.size(14.dp)
+                )
                 Text(
                     text = "4.5",
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1
                 )
                 Spacer(modifier = Modifier.size(8.dp))
-                Icon(imageVector = Icons.Filled.Star, contentDescription = null,
-                    modifier = Modifier.size(14.dp)
-                )
+
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
-                    text = "(21)",
+                    text = "30+",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray,
                     maxLines = 1

@@ -10,6 +10,7 @@ plugins {
     // serialization plugin
     id("org.jetbrains.kotlin.plugin.serialization")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 // Read MAPS_API_KEY from local.properties
@@ -103,6 +104,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation("com.stripe:stripe-android:21.3.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
 }
 kapt {
     correctErrorTypes = true

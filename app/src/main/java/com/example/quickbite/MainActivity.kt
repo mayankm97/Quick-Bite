@@ -1,6 +1,7 @@
 package com.example.quickbite
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
@@ -20,6 +22,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +33,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +60,7 @@ import androidx.navigation.toRoute
 import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.FoodHubSession
 import com.example.quickbite.data.models.FoodItem
+import com.example.quickbite.notification.QuickBiteMessagingService
 import com.example.quickbite.ui.features.add_address.AddAddressScreen
 import com.example.quickbite.ui.features.address_list.AddressListScreen
 import com.example.quickbite.ui.features.auth.AuthScreen
@@ -63,7 +70,12 @@ import com.example.quickbite.ui.features.cart.CartScreen
 import com.example.quickbite.ui.features.cart.CartViewModel
 import com.example.quickbite.ui.features.food_item_details.FoodDetailsScreen
 import com.example.quickbite.ui.features.home.HomeScreen
+import com.example.quickbite.ui.features.notifications.NotificationsList
+import com.example.quickbite.ui.features.notifications.NotificationsViewModel
+import com.example.quickbite.ui.features.order_details.OrderDetailsScreen
 import com.example.quickbite.ui.features.order_success.OrderSuccess
+import com.example.quickbite.ui.features.orders.OrderListScreen
+import com.example.quickbite.ui.features.orders.OrderListViewModel
 import com.example.quickbite.ui.features.restaurant_details.RestaurantDetailsScreen
 import com.example.quickbite.ui.navigation.AddAddress
 import com.example.quickbite.ui.navigation.AddressList
@@ -73,7 +85,8 @@ import com.example.quickbite.ui.navigation.FoodDetails
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
 import com.example.quickbite.ui.navigation.Notification
-import com.example.quickbite.ui.navigation.NotificationScreen
+import com.example.quickbite.ui.navigation.OrderDetails
+import com.example.quickbite.ui.navigation.OrderList
 import com.example.quickbite.ui.navigation.OrderSuccess
 import com.example.quickbite.ui.navigation.RestaurantDetails
 import com.example.quickbite.ui.navigation.SignUp
@@ -84,6 +97,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.typeOf
@@ -96,6 +110,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var session: FoodHubSession
 
+    val viewModel by viewModels<HomeViewModel>()
+
     sealed class BottomNavItem(
         val route: Any,
         val icon: Int,
@@ -103,6 +119,7 @@ class MainActivity : ComponentActivity() {
         object Home : BottomNavItem(com.example.quickbite.ui.navigation.Home, R.drawable.ic_home)
         object Cart : BottomNavItem(com.example.quickbite.ui.navigation.Cart, R.drawable.ic_cart)
         object Notification : BottomNavItem(com.example.quickbite.ui.navigation.Notification, R.drawable.ic_notification)
+        object Orders : BottomNavItem(OrderList, R.drawable.ic_orders)
     }
 
     @OptIn(ExperimentalSharedTransitionApi::class)
@@ -148,12 +165,24 @@ class MainActivity : ComponentActivity() {
                 val navItems = listOf(
                     BottomNavItem.Home,
                     BottomNavItem.Cart,
-                    BottomNavItem.Notification
+                    BottomNavItem.Notification,
+                    BottomNavItem.Orders
                 )
                 val navController = rememberNavController()
                 val cartViewModel : CartViewModel = hiltViewModel()
                 val cardItemSize = cartViewModel.cartItemCount.collectAsStateWithLifecycle()
+                val notificationViewModel : NotificationsViewModel = hiltViewModel()
+                val unreadCount = notificationViewModel.unreadCount.collectAsStateWithLifecycle()
 
+                LaunchedEffect(key1 = true) {
+                    viewModel.event.collectLatest {
+                        when (it) {
+                            is HomeViewModel.HomeEvent.NavigateToOrderDetail -> {
+                                navController.navigate(OrderDetails(it.orderID))
+                            }
+                        }
+                    }
+                }
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         val currentRoute = navController.currentBackStackEntryAsState().value?.destination
@@ -178,20 +207,12 @@ class MainActivity : ComponentActivity() {
                                                     tint = if (selected) MaterialTheme.colorScheme.primary else Color.Gray,
                                                     modifier = Modifier.align(Alignment.Center)
                                                     )
+
                                                 if (item.route == Cart && cardItemSize.value > 0) {
-                                                    Box(
-                                                        modifier = Modifier.size(16.dp)
-                                                            .clip(CircleShape).background(
-                                                            Mustard
-                                                        ).align(Alignment.TopEnd)
-                                                    ) {
-                                                        Text(
-                                                            text = "${cardItemSize.value}",
-                                                            modifier = Modifier.align(Alignment.Center),
-                                                            color = Color.White,
-                                                            style = TextStyle(fontSize = 10.sp)
-                                                        )
-                                                    }
+                                                    ItemCount(cardItemSize.value)
+                                                }
+                                                if(item.route == Notification && unreadCount.value > 0) {
+                                                    ItemCount(unreadCount.value)
                                                 }
                                             }
                                         }
@@ -277,8 +298,11 @@ class MainActivity : ComponentActivity() {
                                 CartScreen(navController, cartViewModel)
                             }
                             composable<Notification> {
-                                shouldShowBottomNav.value = true
-                                NotificationScreen()
+                                // this effect only runs when all compositions are done
+                                SideEffect {
+                                    shouldShowBottomNav.value = true
+                                }
+                                NotificationsList(navController, notificationViewModel)
                             }
                             composable<AddressList> {
                                 shouldShowBottomNav.value = false
@@ -293,6 +317,17 @@ class MainActivity : ComponentActivity() {
                                 val orderID = it.toRoute<OrderSuccess>().orderID
                                 OrderSuccess(orderID, navController)
                             }
+                            composable<OrderList> {
+                                shouldShowBottomNav.value = true
+                                OrderListScreen(navController)
+                            }
+                            composable<OrderDetails> {
+                                SideEffect {
+                                    shouldShowBottomNav.value = false
+                                }
+                                val orderID = it.toRoute<OrderDetails>().orderId
+                                OrderDetailsScreen(navController, orderID)
+                            }
                         }
                     }
                 }
@@ -306,6 +341,39 @@ class MainActivity : ComponentActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             delay(3000)
             showSplashScreen = false
+            processIntent(intent, viewModel)
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        processIntent(intent, viewModel)
+    }
+
+    private fun processIntent(intent: Intent, viewModel: HomeViewModel) {
+        if (intent.hasExtra(QuickBiteMessagingService.ORDER_ID)) {
+            val orderID = intent.getStringExtra(QuickBiteMessagingService.ORDER_ID)
+            viewModel.navigateToOrderDetail(orderID!!)
+            intent.removeExtra(QuickBiteMessagingService.ORDER_ID)
+        }
+    }
+}
+
+@Composable
+fun BoxScope.ItemCount(count: Int) {
+    Box(
+        modifier = Modifier
+            .size(16.dp)
+            .clip(CircleShape)
+            .background(Mustard)
+            .align(Alignment.TopEnd)
+    ) {
+        Text(
+            text = "${count}",
+            modifier = Modifier
+                .align(Alignment.Center),
+            color = Color.White,
+            style = TextStyle(fontSize = 10.sp)
+        )
     }
 }

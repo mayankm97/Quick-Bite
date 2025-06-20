@@ -97,9 +97,11 @@ fun CartScreen(navController: NavController, viewModel: CartViewModel) {
                 is CartViewModel.CartEvent.onAddressClicked -> {
                     navController.navigate(AddressList)
                 }
+
                 is CartViewModel.CartEvent.OrderSuccess -> {
                     navController.navigate(OrderSuccess(it.orderId!!))
                 }
+
                 is CartViewModel.CartEvent.onInitiatePayment -> {
                     PaymentConfiguration.init(navController.context, it.data.publishableKey)
                     val customer = PaymentSheet.CustomerConfiguration(
@@ -119,6 +121,7 @@ fun CartScreen(navController: NavController, viewModel: CartViewModel) {
                         paymentSheetConfig
                     )
                 }
+
                 else -> {
 
                 }
@@ -214,7 +217,7 @@ fun CartScreen(navController: NavController, viewModel: CartViewModel) {
             Button(
                 onClick = {
                     viewModel.checkout()
-                          },
+                },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = selectedAddress.value != null
             ) {
@@ -354,7 +357,8 @@ fun CartItemView(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                FoodItemCounter(count = cartItem.quantity,
+                FoodItemCounter(
+                    count = cartItem.quantity,
                     onCounterIncrement = { onIncrement.invoke(cartItem, cartItem.quantity) },
                     onCounterDecrement = { onDecrement.invoke(cartItem, cartItem.quantity) })
             }

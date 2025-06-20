@@ -9,9 +9,13 @@ import com.example.quickbite.data.models.CartResponse
 import com.example.quickbite.data.models.CategoriesResponse
 import com.example.quickbite.data.models.ConfirmPaymentRequest
 import com.example.quickbite.data.models.ConfirmPaymentResponse
+import com.example.quickbite.data.models.FCMRequest
 import com.example.quickbite.data.models.FoodItemResponse
 import com.example.quickbite.data.models.GenericMsgResponse
+import com.example.quickbite.data.models.NotificationListResponse
 import com.example.quickbite.data.models.OAuthRequest
+import com.example.quickbite.data.models.Order
+import com.example.quickbite.data.models.OrderListResponse
 import com.example.quickbite.data.models.PaymentIntentRequest
 import com.example.quickbite.data.models.PaymentIntentResponse
 import com.example.quickbite.data.models.RestaurantsResponse
@@ -25,6 +29,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -76,5 +81,20 @@ interface FoodApi {
     suspend fun verifyPurchase(
         @Body request: ConfirmPaymentRequest, @Path("paymentIntentId") paymentIntentId: String
     ): Response<ConfirmPaymentResponse>
+
+    @GET("/orders")
+    suspend fun getOrders(): Response<OrderListResponse>
+
+    @GET("/orders/{orderId}")
+    suspend fun getOrderDetails(@Path("orderId") orderId: String): Response<Order>
+
+    @PUT("/notifications/fcm-token")
+    suspend fun updateToken(@Body request: FCMRequest): Response<GenericMsgResponse>
+
+    @POST("/notifications/{id}/read")
+    suspend fun readNotification(@Path("id") id: String): Response<GenericMsgResponse>
+
+    @GET("/notifications")
+    suspend fun getNotifications(): Response<NotificationListResponse>
 
 }
