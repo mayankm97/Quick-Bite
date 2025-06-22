@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "654336084338",
+    "project_id": "quickbite-dbc3e",
+    "storage_bucket": "quickbite-dbc3e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654336084338:android:4e45ca50ba518ad93475eb",
+        "android_client_info": {
+          "package_name": "com.example.quickbite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3IrdaWzWit40ARCH2j0x_JBMJ1qSZ4H4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654336084338:android:b878cc36735e16833475eb",
+        "android_client_info": {
+          "package_name": "com.example.quickbite.restaurant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3IrdaWzWit40ARCH2j0x_JBMJ1qSZ4H4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

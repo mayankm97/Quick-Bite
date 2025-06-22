@@ -48,3 +48,6 @@ object OrderList : NavRoute
 
 @Serializable
 data class OrderDetails(val orderId: String) : NavRoute
+
+@Serializable
+object MenuList : NavRoute

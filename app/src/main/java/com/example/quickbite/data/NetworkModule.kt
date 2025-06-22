@@ -33,11 +33,12 @@ object NetworkModule {
     // In this whole functions, we modified the OkHttpClient to automatically attach the user's session token
     // (Authorization: Bearer <token>) with every backend call by using an Interceptor.
     @Provides
-    fun provideClient(session: FoodHubSession): OkHttpClient {
+    fun provideClient(session: FoodHubSession, @ApplicationContext context: Context): OkHttpClient {
         val client = OkHttpClient.Builder()
         client.addInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer ${session.getToken()}")
+                .addHeader("X-Package-Name", context.packageName)
                 .build()
             chain.proceed(request)
         }

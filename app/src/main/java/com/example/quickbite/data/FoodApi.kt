@@ -10,6 +10,8 @@ import com.example.quickbite.data.models.CategoriesResponse
 import com.example.quickbite.data.models.ConfirmPaymentRequest
 import com.example.quickbite.data.models.ConfirmPaymentResponse
 import com.example.quickbite.data.models.FCMRequest
+import com.example.quickbite.data.models.FoodItem
+import com.example.quickbite.data.models.FoodItemListResponse
 import com.example.quickbite.data.models.FoodItemResponse
 import com.example.quickbite.data.models.GenericMsgResponse
 import com.example.quickbite.data.models.NotificationListResponse
@@ -18,6 +20,7 @@ import com.example.quickbite.data.models.Order
 import com.example.quickbite.data.models.OrderListResponse
 import com.example.quickbite.data.models.PaymentIntentRequest
 import com.example.quickbite.data.models.PaymentIntentResponse
+import com.example.quickbite.data.models.Restaurant
 import com.example.quickbite.data.models.RestaurantsResponse
 import com.example.quickbite.data.models.ReverseGeoCodeRequest
 import com.example.quickbite.data.models.SignInRequest
@@ -96,5 +99,27 @@ interface FoodApi {
 
     @GET("/notifications")
     suspend fun getNotifications(): Response<NotificationListResponse>
+
+    // add restaurant endpoints
+    @GET("/restaurant-owner/profile")
+    suspend fun getRestaurantProfile(): Response<Restaurant>
+
+    @GET("/restaurant-owner/orders")
+    suspend fun getRestaurantOrders(@Query("status") status: String): Response<OrderListResponse>
+
+    @PATCH("orders/{orderId}/status")
+    suspend fun updateOrderStatus(
+        @Path("orderId") orderId: String,
+        @Body map: Map<String, String>
+    ): Response<GenericMsgResponse>
+
+    @GET("/restaurants/{id}/menu")
+    suspend fun getRestaurantMenu(@Path("id") restaurantId: String): Response<FoodItemListResponse>
+
+    @POST("/restaurants/{id}/menu")
+    suspend fun addRestaurantMenu(
+        @Path("id") restaurantId: String,
+        @Body foodItem: FoodItem
+    ): Response<GenericMsgResponse>
 
 }
