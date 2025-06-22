@@ -12,3 +12,4 @@
 11. Started with payment integration, to be done
 12. Map Integration working as intended and so does Stripe payment Integration.
 13. Here I implemented working of managing orders, notification screen and push notifications, managing orders means creating order screen and categorizing them into upcoming and history based on a string. Then implemented push notification to see the status of a particular order via notification and notification screen via navigation menu as well.
+14. Implemented flavors and separated concerns, i.e. customer, restaurant and rider. Created restaurant app as of now, still a lot to be done. 
