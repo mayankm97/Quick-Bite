@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.example.quickbite.ui.features.common.FoodItemView
 import com.example.quickbite.ui.features.notifications.ErrorScreen
 import com.example.quickbite.ui.features.notifications.LoadingScreen
+import com.example.quickbite.ui.navigation.AddMenu
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -37,7 +38,7 @@ fun SharedTransitionScope.ListMenuItemsScreen(
                 when (it) {
                     is ListMenuItemViewModel.MenuItemEvent.AddNewMenuItem -> {
                         navController.currentBackStackEntry?.savedStateHandle?.remove<Boolean>("added")
-                       // navController.navigate(AddMenu)
+                        navController.navigate(AddMenu)
                     }
                 }
             }

@@ -21,6 +21,7 @@ class QuickBiteMessagingService: FirebaseMessagingService() {
         quickBiteNotificationManager.updateToken(token)
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         val intent = Intent(this, MainActivity::class.java)

@@ -1,5 +1,6 @@
 package com.example.quickbite.ui.features.auth.login
 
+import Primary
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -54,7 +55,6 @@ import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
 import com.example.quickbite.ui.navigation.SignUp
-import com.example.quickbite.ui.theme.Primary
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

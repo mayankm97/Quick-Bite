@@ -1,5 +1,6 @@
 package com.example.quickbite.ui
 
+import Primary
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -56,7 +57,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import com.example.quickbite.R
 import com.example.quickbite.ui.features.auth.BaseAuthViewModel
-import com.example.quickbite.ui.theme.Primary
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 

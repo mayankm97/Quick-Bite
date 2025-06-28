@@ -1,5 +1,6 @@
 package com.example.quickbite.ui.feature.cart
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quickbite.data.FoodApi
@@ -133,6 +134,7 @@ class CartViewModel @Inject constructor(val foodApi: FoodApi) : ViewModel() {
             _uiState.value = CartUiState.Loading
             val paymentDetails =
                 safeApiCall { foodApi.getPaymentIntent(PaymentIntentRequest(address.value!!.id!!)) }
+            Log.d("CheckoutDebug", "paymentDetails: $paymentDetails")
 
             when (paymentDetails) {
                 is ApiResponse.Success -> {

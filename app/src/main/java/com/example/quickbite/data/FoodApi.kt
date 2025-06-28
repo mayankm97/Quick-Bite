@@ -9,11 +9,13 @@ import com.example.quickbite.data.models.CartResponse
 import com.example.quickbite.data.models.CategoriesResponse
 import com.example.quickbite.data.models.ConfirmPaymentRequest
 import com.example.quickbite.data.models.ConfirmPaymentResponse
+import com.example.quickbite.data.models.DelieveriesListResponse
 import com.example.quickbite.data.models.FCMRequest
 import com.example.quickbite.data.models.FoodItem
 import com.example.quickbite.data.models.FoodItemListResponse
 import com.example.quickbite.data.models.FoodItemResponse
 import com.example.quickbite.data.models.GenericMsgResponse
+import com.example.quickbite.data.models.ImageUploadResponse
 import com.example.quickbite.data.models.NotificationListResponse
 import com.example.quickbite.data.models.OAuthRequest
 import com.example.quickbite.data.models.Order
@@ -23,16 +25,20 @@ import com.example.quickbite.data.models.PaymentIntentResponse
 import com.example.quickbite.data.models.Restaurant
 import com.example.quickbite.data.models.RestaurantsResponse
 import com.example.quickbite.data.models.ReverseGeoCodeRequest
+import com.example.quickbite.data.models.RiderDeliveryOrderListResponse
 import com.example.quickbite.data.models.SignInRequest
 import com.example.quickbite.data.models.SignUpRequest
 import com.example.quickbite.data.models.UpdateCartItemRequest
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -121,5 +127,22 @@ interface FoodApi {
         @Path("id") restaurantId: String,
         @Body foodItem: FoodItem
     ): Response<GenericMsgResponse>
+
+    @POST("/images/upload")
+    @Multipart
+    suspend fun uploadImage(@Part image: MultipartBody.Part): Response<ImageUploadResponse>
+
+    @GET("/rider/deliveries/available")
+    suspend fun getAvailableDeliveries(): Response<DelieveriesListResponse>
+
+    @POST("/rider/deliveries/{orderId}/reject")
+    suspend fun rejectDelivery(@Path("orderId") orderId: String): Response<GenericMsgResponse>
+
+    @POST("/rider/deliveries/{orderId}/accept")
+    suspend fun acceptDelivery(@Path("orderId") orderId: String): Response<GenericMsgResponse>
+
+    @GET("/rider/deliveries/active")
+    suspend fun getActiveDeliveries(): Response<RiderDeliveryOrderListResponse>
+
 
 }

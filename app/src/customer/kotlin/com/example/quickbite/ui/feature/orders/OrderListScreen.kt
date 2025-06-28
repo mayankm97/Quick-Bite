@@ -61,6 +61,8 @@ fun OrderListScreen(navController: NavController, viewModel: OrderListViewModel 
                     OrderListViewModel.OrderListEvent.NavigateBack -> {
                         navController.popBackStack()
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -157,7 +159,7 @@ fun OrderListScreen(navController: NavController, viewModel: OrderListViewModel 
                             }
 
                             1 -> {
-                                OrderListInternal(list.filter { order -> order.status != ">> " },
+                                OrderListInternal(list.filter { order -> order.status != "PENDING_ACCEPTANCE" },
                                     onClick = { order ->
                                         viewModel.navigateToDetails(order)
                                     })
@@ -179,6 +181,8 @@ fun OrderListScreen(navController: NavController, viewModel: OrderListViewModel 
                     }
                 }
             }
+
+            else -> {}
         }
 
     }

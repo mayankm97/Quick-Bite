@@ -1,5 +1,6 @@
 package com.example.quickbite.ui.features.auth
 
+import Primary
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,7 +51,6 @@ import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
 import com.example.quickbite.ui.navigation.Login
 import com.example.quickbite.ui.navigation.SignUp
-import com.example.quickbite.ui.theme.Primary
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

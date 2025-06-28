@@ -1,5 +1,6 @@
 package com.example.quickbite
 
+import Mustard
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
@@ -51,17 +52,12 @@ import androidx.navigation.toRoute
 import com.example.quickbite.data.FoodApi
 import com.example.quickbite.data.FoodHubSession
 import com.example.quickbite.ui.QuickBiteNavHost
-import com.example.quickbite.ui.feature.home.HomeScreen
-import com.example.quickbite.ui.feature.menu.add.AddMenuItemScreen
-import com.example.quickbite.ui.feature.menu.image.ImagePickerScreen
-import com.example.quickbite.ui.feature.menu.list.ListMenuItemsScreen
-import com.example.quickbite.ui.feature.order_details.OrderDetailsScreen
-import com.example.quickbite.ui.feature.order_list.OrderListScreen
 import com.example.quickbite.ui.features.auth.AuthScreen
 import com.example.quickbite.ui.features.auth.login.SignInScreen
 import com.example.quickbite.ui.features.auth.signup.SignUpScreen
 import com.example.quickbite.ui.features.notifications.NotificationsList
 import com.example.quickbite.ui.features.notifications.NotificationsViewModel
+import com.example.quickbite.ui.home.DeliveriesScreen
 import com.example.quickbite.ui.navigation.AddMenu
 import com.example.quickbite.ui.navigation.AuthScreen
 import com.example.quickbite.ui.navigation.Home
@@ -72,7 +68,8 @@ import com.example.quickbite.ui.navigation.Notification
 import com.example.quickbite.ui.navigation.OrderDetails
 import com.example.quickbite.ui.navigation.OrderList
 import com.example.quickbite.ui.navigation.SignUp
-import com.example.quickbite.ui.theme.Mustard
+import com.example.quickbite.ui.orders.details.OrderDetailsScreen
+import com.example.quickbite.ui.orders.list.OrdersListScreen
 import com.example.quickbite.ui.theme.QuickBiteTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -97,7 +94,6 @@ class MainActivity : BaseQuickBiteActivity() {
         object Home : BottomNavItem(com.example.quickbite.ui.navigation.Home, R.drawable.ic_home)
         object Notification : BottomNavItem(com.example.quickbite.ui.navigation.Notification, R.drawable.ic_notification)
         object Orders : BottomNavItem(OrderList, R.drawable.ic_orders)
-        object Menu : BottomNavItem(MenuList, android.R.drawable.ic_menu_more)
     }
 
     @OptIn(ExperimentalSharedTransitionApi::class)
@@ -143,8 +139,7 @@ class MainActivity : BaseQuickBiteActivity() {
                 val navItems = listOf(
                     BottomNavItem.Home,
                     BottomNavItem.Notification,
-                    BottomNavItem.Orders,
-                    BottomNavItem.Menu
+                    BottomNavItem.Orders
                 )
                 val navController = rememberNavController()
                 val notificationViewModel : NotificationsViewModel = hiltViewModel()
@@ -217,7 +212,7 @@ class MainActivity : BaseQuickBiteActivity() {
                             }
                             composable<Home> {
                                 shouldShowBottomNav.value = true
-                                HomeScreen(navController)
+                                DeliveriesScreen(navController)
                             }
                             composable<Notification> {
                                 // this effect only runs when all compositions are done
@@ -228,25 +223,25 @@ class MainActivity : BaseQuickBiteActivity() {
                             }
                             composable<OrderList> {
                                 shouldShowBottomNav.value = true
-                                OrderListScreen(navController)
+                                OrdersListScreen(navController)
                             }
                             composable<OrderDetails> {
                                 shouldShowBottomNav.value = false
                                 val orderID = it.toRoute<OrderDetails>().orderId
                                 OrderDetailsScreen(orderID, navController)
                             }
-                            composable<MenuList> {
-                                shouldShowBottomNav.value = true
-                                ListMenuItemsScreen(navController, this)
-                            }
-                            composable<AddMenu> {
-                                shouldShowBottomNav.value = false
-                                AddMenuItemScreen(navController)
-                            }
-                            composable<ImagePicker> {
-                                shouldShowBottomNav.value = false
-                                ImagePickerScreen(navController)
-                            }
+//                            composable<MenuList> {
+//                                shouldShowBottomNav.value = true
+//                                ListMenuItemsScreen(navController, this)
+//                            }
+//                            composable<AddMenu> {
+//                                shouldShowBottomNav.value = false
+//                                AddMenuItemScreen(navController)
+//                            }
+//                            composable<ImagePicker> {
+//                                shouldShowBottomNav.value = false
+//                                ImagePickerScreen(navController)
+//                            }
                         }
                     }
                 }

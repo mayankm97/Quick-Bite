@@ -1,6 +1,8 @@
 package com.example.quickbite.ui.theme
 
-import android.app.Activity
+import Pink40
+import Pink80
+import Primary
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
