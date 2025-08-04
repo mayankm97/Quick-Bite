@@ -1,5 +1,3 @@
----
-```markdown
 # QuickBite 🍔 – Android Food Delivery App
 
 **QuickBite** is a modular, full-stack food delivery application with separate Android apps for customers, delivery riders, and restaurants. Built using Kotlin and Jetpack Compose for the frontend and Ktor with MySQL for the backend, it demonstrates real-world implementation of authentication, stateful cart management, map-based address selection, and secure payments via Stripe.
