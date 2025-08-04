@@ -114,4 +114,4 @@ QuickBite was developed as part of a full-stack Android learning journey. It int
 To get a local copy up and running:
 
 ```bash
-git clone https://github.com/mayankm97/QuickBite.git
+git clone https://github.com/mayankm97/Quick-Bite.git
