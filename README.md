@@ -46,11 +46,23 @@ QuickBite uses **product flavors** to build separate role-based apps:
 ```
 
 QuickBite/
-├── customer-app/
-├── restaurant-app/
-├── rider-app/
-├── ktor-backend/
-└── shared-resources/
+│
+├── app/ (Android app)
+│   ├── src/
+│   │   ├── customer/
+│   │   ├── rider/
+│   │   ├── restaurant/
+│   ├── build.gradle.kts
+│
+├── backend/ (Ktor server)
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── auth/
+│   │   ├── db/
+│   ├── application.conf
+│
+├── README.md
+
 
 ```
 
@@ -97,8 +109,9 @@ QuickBite was developed as part of a full-stack Android learning journey. It int
 
 ---
 
-```
+## 🛠️ Getting Started
 
----
+To get a local copy up and running:
 
-You can now paste this directly in your `README.md`. Let me know if you want badges (like “Made with Kotlin”, “MIT License”, etc.) added at the top!
+```bash
+git clone https://github.com/your-username/QuickBite.git
